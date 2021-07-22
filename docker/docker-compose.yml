@@ -1,0 +1,22 @@
+version: "3.9"  # optional since v1.27.0
+services:
+  pagina1:
+    image: nginx:1.20.1-alpine
+    ports:
+      - "8096:80"
+    volumes:
+      - D:\volumenes\pagina1:/usr/share/nginx/html
+
+  pagina2:
+    image: nginx:1.20.1-alpine
+    ports:
+      - "8097:80"
+    volumes:
+      - D:\volumenes\pagina2:/usr/share/nginx/html
+
+  pagina3:
+    image: nginx:1.20.1-alpine
+    ports:
+      - "8098:80"
+    volumes:
+      - D:\volumenes\pagina2:/usr/share/nginx/html
