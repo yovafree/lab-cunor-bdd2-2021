@@ -17,6 +17,7 @@ namespace Facturacion.API.Models
         public DbSet<Producto> Productos {get;set;}
         public DbSet<Factura> Facturas {get;set;}
         public DbSet<DetFactura> DetFactura {get;set;}
+        public DbSet<Usuario> Usuario {get;set;}
 
         protected override void OnModelCreating(ModelBuilder builder){
             base.OnModelCreating(builder);

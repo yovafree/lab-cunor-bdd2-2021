@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Facturacion.API.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace Facturacion.API.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     public class ProductosController : ControllerBase{
 
         private readonly PostgreSQLContext _context;
