@@ -20,13 +20,13 @@ namespace Facturacion.API.Services
     public class UserService : IUserService
     {
 
-        private readonly AppSettings _appSettings;
+        private readonly Jwt _jwt;
 
         private readonly PostgreSQLContext _context;
 
-        public UserService(IOptions<AppSettings> appSettings, PostgreSQLContext context)
+        public UserService(IOptions<Jwt> jwt, PostgreSQLContext context)
         {
-            _appSettings = appSettings.Value;
+            _jwt = jwt.Value;
             _context = context;
         }
 
@@ -52,14 +52,21 @@ namespace Facturacion.API.Services
 
         private string generateJwtToken(Usuario user)
         {
+            var claims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.correo_electronico),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.NameIdentifier, user.correo_electronico)
+            };
+
             // generate token that is valid for 7 days
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+            var key = Encoding.ASCII.GetBytes(_jwt.Key);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[] { new Claim("id", user.cod_usuario.ToString()) }),
+                Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);

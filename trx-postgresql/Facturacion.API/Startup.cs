@@ -1,12 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Facturacion.API.Helpers;
 using Facturacion.API.Models;
 using Facturacion.API.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +18,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 namespace Facturacion.API
@@ -31,7 +36,9 @@ namespace Facturacion.API
         public void ConfigureServices(IServiceCollection services)
         {
 
+            services.AddCors();
             services.AddControllers();
+
             services.AddSwaggerGen(swagger =>
             {
                 //This is to generate the Default UI of Swagger Documentation    
@@ -50,7 +57,8 @@ namespace Facturacion.API
                     BearerFormat = "JWT",  
                     In = ParameterLocation.Header,  
                     Description = "Enter 'Bearer' [space] and then your valid token in the text input below.\r\n\r\nExample: \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\"",  
-                });  
+                });
+
                 swagger.AddSecurityRequirement(new OpenApiSecurityRequirement  
                 {  
                     {  
@@ -72,12 +80,32 @@ namespace Facturacion.API
 
             services.AddDbContext<PostgreSQLContext>(options => options.UseNpgsql(sqlConnectionString));
 
-            // configure strongly typed settings object
-            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
+            services
+            .AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+                };
+            });
+
+             // configure strongly typed settings object
+            services.Configure<Jwt>(Configuration.GetSection("Jwt"));
 
             // configure DI for application services
             services.AddScoped<IUserService, UserService>();
-
 
         }
 
@@ -91,25 +119,19 @@ namespace Facturacion.API
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Facturacion.API v1"));
             }
 
+            app.UseRouting();
+
             // global cors policy
             app.UseCors(x => x
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader());
 
-            // custom jwt auth middleware
-            app.UseMiddleware<JwtMiddleware>();
-
-            app.UseHttpsRedirection();
-
-            app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
+            
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(x => x.MapControllers());
         }
     }
 }

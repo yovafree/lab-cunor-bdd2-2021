@@ -21,3 +21,10 @@ GRANT SELECT, INSERT, UPDATE ON public.factura TO app_role;
 GRANT SELECT, INSERT, UPDATE ON public.usuario TO app_role;
 
 GRANT ALL ON SEQUENCE public.usuario_cod_usuario_seq TO app_role;
+
+
+--- Crear un usuario 3
+
+CREATE USER app_cunor3 WITH PASSWORD '554988QrjdW';
+
+GRANT app_role TO app_cunor3;
