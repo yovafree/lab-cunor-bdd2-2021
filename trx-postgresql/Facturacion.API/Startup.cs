@@ -114,6 +114,8 @@ namespace Facturacion.API
         {
             if (env.IsDevelopment())
             {
+                
+            }else{
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Facturacion.API v1"));
