@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30320.27
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{D2ABAB84-BF74-430A-B69E-9DC6D40DDA17}") = "NorthWindAnalisis", "NorthWindAnalisis\NorthWindAnalisis.dwproj", "{6917949A-BAB5-4FAE-8C9E-B2446BE40D16}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Development|Default = Development|Default
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6917949A-BAB5-4FAE-8C9E-B2446BE40D16}.Development|Default.ActiveCfg = Development
+		{6917949A-BAB5-4FAE-8C9E-B2446BE40D16}.Development|Default.Build.0 = Development
+		{6917949A-BAB5-4FAE-8C9E-B2446BE40D16}.Development|Default.Deploy.0 = Development
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CA57678F-5539-482C-977B-BDEECEC743F5}
+	EndGlobalSection
+EndGlobal
